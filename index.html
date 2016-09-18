@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
+        <title> Transform Coordinates of Points in China</title>
+        <style>
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            table, tr, td{
+                vertical-align: middle;
+                text-align: center;
+                width: 95%;
+                border: 1px black solid;
+                border-collapse: collapse;
+            }
+            #consult {
+                width: 700px;
+                margin-top: 50px;
+                /*height: 80%;*/
+                /*padding: 30px;*/
+                margin-left: auto;
+                margin-right: auto;
+                border: 1px black solid;
+            }
+            #history{
+                width: 1000px;
+                margin-top: 50px;
+                /*height: 80%;*/
+                /*padding: 30px;*/
+                margin-left: auto;
+                margin-right: auto;
+                border: 1px black solid;
+                /*overflow: scroll;*/
+            }
+            #history td{
+                width: 50px;
+                max-width: 100px;
+            }
+
+        </style>
+        <!-- jQuery -->
+        <script src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.0.min.js"></script>
+        <!-- Transform -->
+        <script src="transform.js"></script>
+        <!-- Google Maps -->
+        <!--        <script src="http://maps.google.cn/maps/api/js?key=AIzaSyAO9lTKIiNT6vVJiAnNZ-JiGyMDgbPeZfA&signed_in=false&libraries=visualization,places">
+                </script>-->
+    </head>
+    <body>
+        <div>
+            <table id="consult">
+                <tr>
+                    <th height= "50px" colspan="4" style="text-align: center"> Place coordinates in float format of degree, e.g., 23.156 and 114.283</th>
+                </tr>
+                <tr>
+                    <td class="name">Coordinate System</td>
+                    <td style="text-align: center">Latitude</td>
+                    <td style="text-align: center">Longitude</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="name">Baidu (Baidu Map)</td>
+                    <td><input  id="bdLat"></td>
+                    <td><input  id="bdLng"></td>
+                    <td class="button"><button id="bdClick">Transform</button></td>
+                </tr>
+                <tr>
+                    <td class="name">GCJ (Gaode Maps, Google Street Map)</td>
+                    <td><input  id="gcjLat"></td>
+                    <td><input  id="gcjLng"></td>
+                    <td class="button"><button id="gcjClick">Transform</button></td>
+                </tr>
+                <tr>
+                    <td class="name">WGS (Google Satellite Map)</td>
+                    <td><input  id="wgsLat"></td>
+                    <td><input  id="wgsLng"></td>
+                    <td class="button"><button id="wgsClick">Transform</button></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <table id="history">
+                <tr>
+                    <th colspan="7">History</th>
+                </tr>
+                <tr>
+                    <td width="20px">ID</td>
+                    <td>bdLat</td>
+                    <td>bdLng</td>
+                    <td>gcjLat</td>
+                    <td>gcjLng</td>
+                    <td>wgsLat</td>
+                    <td>wgsLng</td>
+                </tr>
+            </table>
+        </div>
+        <script>
+            var counter = 1;
+
+            function bd2others(lat, lng) {
+                var bdLat = lat;
+                var bdLng = lng;
+                var gcjPoint = bd2gcj(bdLat, bdLng);  // bd2gcj
+                var gcjLat = gcjPoint.lat;
+                var gcjLng = gcjPoint.lng;
+                var wgsPoint = gcj2wgs_exact(gcjLat, gcjLng);  // gcj2wgs
+                var wgsLat = wgsPoint.lat;
+                var wgsLng = wgsPoint.lng;
+
+                visulization(bdLat, bdLng, gcjLat, gcjLng, wgsLat, wgsLng);
+            }
+
+            function gcj2others(lat, lng) {
+                var gcjLat = lat;
+                var gcjLng = lng;
+                var bdPoint = gcj2bd(gcjLat, gcjLng);  // bd2gcj
+                var bdLat = bdPoint.lat;
+                var bdLng = bdPoint.lng;
+                var wgsPoint = gcj2wgs_exact(gcjLat, gcjLng);  // gcj2wgs
+                var wgsLat = wgsPoint.lat;
+                var wgsLng = wgsPoint.lng;
+
+                visulization(bdLat, bdLng, gcjLat, gcjLng, wgsLat, wgsLng);
+            }
+
+            function wgs2others(lat, lng) {
+                var wgsLat = lat;
+                var wgsLng = lng;
+                var gcjPoint = wgs2gcj(wgsLat, wgsLng);  // bd2gcj
+                var gcjLat = gcjPoint.lat;
+                var gcjLng = gcjPoint.lng;
+                var bdPoint = gcj2bd(gcjLat, gcjLng);  // gcj2wgs
+                var bdLat = bdPoint.lat;
+                var bdLng = bdPoint.lng;
+
+                visulization(bdLat, bdLng, gcjLat, gcjLng, wgsLat, wgsLng);
+            }
+
+            function visulization(bdLat, bdLng, gcjLat, gcjLng, wgsLat, wgsLng) {
+                $('#bdLat').val(bdLat);
+                $('#bdLng').val(bdLng);
+                $('#gcjLat').val(gcjLat);
+                $('#gcjLng').val(gcjLng);
+                $('#wgsLat').val(wgsLat);
+                $('#wgsLng').val(wgsLng);
+
+                var historyItem = '<tr>' +
+                        '<td>' + counter + '</td>' +
+                        '<td>' + bdLat + '</td>' +
+                        '<td>' + bdLng + '</td>' +
+                        '<td>' + gcjLat + '</td>' +
+                        '<td>' + gcjLng + '</td>' +
+                        '<td>' + wgsLat + '</td>' +
+                        '<td>' + wgsLng + '</td>' +
+                        '</tr>';
+                $("#history").append(historyItem);
+
+                counter++;
+            }
+
+            $('#bdClick').click(function () {
+                bd2others($('#bdLat').val() - 0, $('#bdLng').val() - 0);
+            });
+            $('#gcjClick').click(function () {
+                gcj2others($('#gcjLat').val() - 0, $('#gcjLng').val() - 0);
+            });
+            $('#wgsClick').click(function () {
+                wgs2others($('#wgsLat').val() - 0, $('#wgsLng').val() - 0);
+            });
+
+
+
+        </script>
+
+    </body>
+</html>
