@@ -1,7 +1,9 @@
-# transformCoordinateSystem
+# 中国地图坐标系之间的转换
 
 Demo: https://yukidaydreamer.github.io/transformCoordinateSystem/
 
-This tool allows you to transform points between different coordinates system that used in China 
+百度地图，高德地图，谷歌地图分别使用不同的坐标系统之间，而其中GCJ，也就是大家所说的“火星坐标系”的出现是处于国家保密所要求的。
 
-(Coordinate System may confuse some users of Chinese Maps a lot at the very first time, LOLLLLLLLL)
+这个工具的提供百度坐标系，“火星坐标系”，以及谷歌坐标系之间的相互转换。
+
+重要提示：核心算法代码来源于网络，本人对此不具有版权，且请特别注意，由于国家保密要求，勿将此工具用于国内地图制作或使用。
